@@ -3,24 +3,24 @@
 
 # Global Transform Editor
 
-Adiciona campos de **Global Position** e **Global Rotation** no topo do Inspector para qualquer `Node3D`.
+Adds **Global Position** and **Global Rotation** fields to the top of the Inspector for any `Node3D`.
 
-## Funcionalidades
+## Features
 
-- **Visualizar/Editar:** Modifique coordenadas globais absolutas usando sliders padrão.
-- **Copiar/Colar Inteligente:** Use os ícones para transferir transforms globais entre nós.
-  - **Copiar:** Salva a string `Vector3(...)` na área de transferência do sistema.
-  - **Colar:** Lê o texto `Vector3(...)` da área de transferência e aplica o valor (suporta Desfazer/Refazer).
-- **Performance:** Seções retráteis. Para de processar quando fechadas ou quando o nó não está selecionado.
+- **Global View/Edit:** Modify absolute world coordinates using standard sliders.
+- **Smart Copy/Paste:** Use the icons to transfer global transforms between nodes.
+  - **Copy:** Saves the `Vector3(...)` string to the system clipboard.
+  - **Paste:** Reads `Vector3(...)` text from the clipboard and applies it (supports Undo/Redo).
+- **Performance:** Collapsible sections. Stops processing when closed or when the node is deselected.
 
-## Como Usar
+## How to Use
 
-1. Selecione um `Node3D`.
-2. Expanda **Global Position** ou **Global Rotation** no topo do Inspector.
-3. Arraste os sliders para modificar os valores.
-4. Use os **ícones de Copiar/Colar** para transferir valores entre objetos ou scripts.
+1. Select a `Node3D`.
+2. Expand **Global Position** or **Global Rotation** at the top of the Inspector.
+3. Drag sliders to modify values.
+4. Use the **Copy/Paste icons** to transfer values between objects or scripts.
 
-## Instalação
+## Installation
 
-1. Coloque a pasta do plugin em `res://addons/`.
-2. Ative em **Projeto > Configurações do Projeto > Plugins**.
+1. Place the plugin folder in `res://addons/`.
+2. Enable it in **Project Settings > Plugins**.
