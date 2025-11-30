@@ -1,23 +1,26 @@
-<img width="1582" height="799" alt="Captura de tela 2025-11-30 104112" src="https://github.com/user-attachments/assets/948abef2-db63-47a1-a79b-fa7accf5e61d" />
+
+<img width="1407" height="745" alt="Captura de tela 2025-11-30 170617" src="https://github.com/user-attachments/assets/8d8788ab-2d04-4934-bd68-98f9f9cd5045" />
 
 # Global Transform Editor
 
-Adds **Global Position** and **Global Rotation** fields to the top of the Inspector for any `Node3D`.
+Adiciona campos de **Global Position** e **Global Rotation** no topo do Inspector para qualquer `Node3D`.
 
-## Features
+## Funcionalidades
 
-- **Global View/Edit:** Modify absolute world coordinates using standard sliders.
-- **Script Ready:** The "Copy" button places the `Vector3(...)` string into your clipboard for direct use in GDScript.
-- **Performance:** Collapsible sections. Stops processing when closed or when the node is deselected.
+- **Visualizar/Editar:** Modifique coordenadas globais absolutas usando sliders padrão.
+- **Copiar/Colar Inteligente:** Use os ícones para transferir transforms globais entre nós.
+  - **Copiar:** Salva a string `Vector3(...)` na área de transferência do sistema.
+  - **Colar:** Lê o texto `Vector3(...)` da área de transferência e aplica o valor (suporta Desfazer/Refazer).
+- **Performance:** Seções retráteis. Para de processar quando fechadas ou quando o nó não está selecionado.
 
-## How to Use
+## Como Usar
 
-1. Select a `Node3D`.
-2. Expand **Global Position** or **Global Rotation** at the top of the Inspector.
-3. Drag sliders to modify values.
-4. Click **Copy** to get the Vector3 code.
+1. Selecione um `Node3D`.
+2. Expanda **Global Position** ou **Global Rotation** no topo do Inspector.
+3. Arraste os sliders para modificar os valores.
+4. Use os **ícones de Copiar/Colar** para transferir valores entre objetos ou scripts.
 
-## Installation
+## Instalação
 
-1. Place the plugin folder in `res://addons/`.
-2. Enable it in **Project Settings > Plugins**.
+1. Coloque a pasta do plugin em `res://addons/`.
+2. Ative em **Projeto > Configurações do Projeto > Plugins**.
