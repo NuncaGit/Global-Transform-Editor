@@ -18,8 +18,11 @@ const COLOR_X = Color(0.96, 0.20, 0.32)
 const COLOR_Y = Color(0.53, 0.84, 0.01)
 const COLOR_Z = Color(0.10, 0.34, 0.90)
 
+var cached_euler_rot := Vector3.ZERO
+
 func setup(node):
 	node_ref = node
+	cached_euler_rot = node_ref.global_rotation_degrees
 	
 	btn_toggle_pos = _create_toggle_btn("Global Position", "pos", show_pos)
 	add_child(btn_toggle_pos)
@@ -166,12 +169,21 @@ func _on_paste_click(type):
 	var undo = EditorInterface.get_editor_undo_redo()
 	if not undo: return
 	undo.create_action("Paste Global " + ("Position" if type == "pos" else "Rotation"))
+	
 	if type == "pos":
 		undo.add_do_property(node_ref, "global_position", vec_val)
 		undo.add_undo_property(node_ref, "global_position", node_ref.global_position)
 	else:
-		undo.add_do_property(node_ref, "global_rotation_degrees", vec_val)
-		undo.add_undo_property(node_ref, "global_rotation_degrees", node_ref.global_rotation_degrees)
+
+		var new_transform = node_ref.global_transform
+		var current_scale = new_transform.basis.get_scale()
+		
+		var new_basis = Basis.from_euler(vec_val * (PI / 180.0))
+		new_transform.basis = new_basis.scaled(current_scale)
+		
+		undo.add_do_property(node_ref, "global_transform", new_transform)
+		undo.add_undo_property(node_ref, "global_transform", node_ref.global_transform)
+		
 	undo.commit_action()
 
 func _parse_vector3_from_string(text: String) -> Variant:
@@ -185,36 +197,53 @@ func _parse_vector3_from_string(text: String) -> Variant:
 func _on_user_changed_value(new_value, axis, type):
 	if not is_instance_valid(node_ref): return
 	var undo = EditorInterface.get_editor_undo_redo()
-	if undo:
-		undo.create_action("Set Global " + axis.to_upper())
-		if type == "pos":
-			var new_pos = node_ref.global_position
-			new_pos[axis] = new_value
+	
+	if type == "pos":
+		var new_pos = node_ref.global_position
+		new_pos[axis] = new_value
+		
+		if undo:
+			undo.create_action("Set Global Position " + axis.to_upper())
 			undo.add_do_property(node_ref, "global_position", new_pos)
 			undo.add_undo_property(node_ref, "global_position", node_ref.global_position)
+			undo.commit_action()
 		else:
-			var new_rot = node_ref.global_rotation_degrees
-			new_rot[axis] = new_value
-			undo.add_do_property(node_ref, "global_rotation_degrees", new_rot)
-			undo.add_undo_property(node_ref, "global_rotation_degrees", node_ref.global_rotation_degrees)
-		undo.commit_action()
+			node_ref.global_position = new_pos
 	else:
-		if type == "pos":
-			node_ref.global_position[axis] = new_value
+		cached_euler_rot[axis] = new_value
+		
+		var new_transform = node_ref.global_transform
+		var current_scale = new_transform.basis.get_scale()
+		
+		var new_basis = Basis.from_euler(cached_euler_rot * (PI / 180.0))
+		new_transform.basis = new_basis.scaled(current_scale)
+		
+		if undo:
+			undo.create_action("Set Global Rotation " + axis.to_upper())
+			undo.add_do_property(node_ref, "global_transform", new_transform)
+			undo.add_undo_property(node_ref, "global_transform", node_ref.global_transform)
+			undo.commit_action()
 		else:
-			node_ref.global_rotation_degrees[axis] = new_value
+			node_ref.global_transform = new_transform
 
 func _process(_delta):
 	if not is_instance_valid(node_ref): return
+	
 	if show_pos:
 		var current_pos = node_ref.global_position
 		for item in sliders_pos:
+			if item.obj.has_focus(): continue
+			
 			var val = current_pos[item.axis]
 			if not is_equal_approx(item.obj.value, val):
 				item.obj.set_value_no_signal(val)
+				
 	if show_rot:
-		var current_rot = node_ref.global_rotation_degrees
-		for item in sliders_rot:
-			var val = current_rot[item.axis]
-			if not is_equal_approx(item.obj.value, val):
+		var current_quat = node_ref.global_transform.basis.get_rotation_quaternion()
+		var cached_quat = Basis.from_euler(cached_euler_rot * (PI / 180.0)).get_rotation_quaternion()
+		
+		if not current_quat.is_equal_approx(cached_quat):
+			cached_euler_rot = node_ref.global_rotation_degrees
+			for item in sliders_rot:
+				var val = cached_euler_rot[item.axis]
 				item.obj.set_value_no_signal(val)
